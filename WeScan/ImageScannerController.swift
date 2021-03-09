@@ -47,6 +47,8 @@ public final class ImageScannerController: UINavigationController {
     
     private(set) var skipEditing: Bool = false
     
+    let acitivityIndicator = UIActivityIndicatorView()
+    
     // MARK: - Life Cycle
     
     /// A black UIView, used to quickly display a black screen when the shutter button is presseed.
@@ -69,6 +71,8 @@ public final class ImageScannerController: UINavigationController {
         
         self.skipEditing = skipEditing
         
+        self.acitivityIndicator.stopAnimating()
+        
         if #available(iOS 13.0, *) {
             navigationBar.tintColor = .label
         } else {
@@ -76,6 +80,7 @@ public final class ImageScannerController: UINavigationController {
         }
         navigationBar.isTranslucent = false
         self.view.addSubview(blackFlashView)
+        self.view.addSubview(self.acitivityIndicator)
         setupConstraints()
         
         // If an image was passed in by the host app (e.g. picked from the photo library), use it instead of the document scanner.
@@ -140,7 +145,13 @@ public final class ImageScannerController: UINavigationController {
             view.trailingAnchor.constraint(equalTo: blackFlashView.trailingAnchor)
         ]
         
+        let activityIndictorConstraints = [
+            acitivityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            acitivityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        ]
+        
         NSLayoutConstraint.activate(blackFlashViewConstraints)
+        NSLayoutConstraint.activate(activityIndictorConstraints)
     }
     
     internal func flashToBlack() {
