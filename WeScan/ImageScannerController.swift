@@ -47,7 +47,7 @@ public final class ImageScannerController: UINavigationController {
     
     private(set) var skipEditing: Bool = false
     
-    let acitivityIndicator = UIActivityIndicatorView()
+    public let acitivityIndicator = UIActivityIndicatorView()
     
     // MARK: - Life Cycle
     
