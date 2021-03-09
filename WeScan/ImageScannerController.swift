@@ -45,6 +45,8 @@ public final class ImageScannerController: UINavigationController {
     /// The object that acts as the delegate of the `ImageScannerController`.
     public weak var imageScannerDelegate: ImageScannerControllerDelegate?
     
+    private(set) var skipEditing: Bool = false
+    
     // MARK: - Life Cycle
     
     /// A black UIView, used to quickly display a black screen when the shutter button is presseed.
@@ -60,10 +62,12 @@ public final class ImageScannerController: UINavigationController {
         return .portrait
     }
     
-    public required init(image: UIImage? = nil, delegate: ImageScannerControllerDelegate? = nil) {
+    public required init(image: UIImage? = nil, delegate: ImageScannerControllerDelegate? = nil, skipEditing: Bool = false) {
         super.init(rootViewController: ScannerViewController())
         
         self.imageScannerDelegate = delegate
+        
+        self.skipEditing = skipEditing
         
         if #available(iOS 13.0, *) {
             navigationBar.tintColor = .label

@@ -77,6 +77,11 @@ public final class ScannerViewController: UIViewController {
         setupNavigationBar()
         setupConstraints()
         
+        if let imageScannerController = navigationController as? ImageScannerController,
+           imageScannerController.skipEditing  {
+            shutterButton.isHidden = true
+        }
+        
         captureSessionManager = CaptureSessionManager(videoPreviewLayer: videoPreviewLayer, delegate: self)
         
         originalBarStyle = navigationController?.navigationBar.barStyle
@@ -128,9 +133,25 @@ public final class ScannerViewController: UIViewController {
         view.addSubview(activityIndicator)
     }
     
+    private lazy var closeButton: UIBarButtonItem = {
+        let closeButton = UIBarButtonItem(barButtonSystemItem: .stop,
+                                          target: self,
+                                          action: #selector(cancelImageScannerController))
+        closeButton.tintColor = .white
+        return closeButton
+    }()
+    
     private func setupNavigationBar() {
         navigationItem.setLeftBarButton(flashButton, animated: false)
-        navigationItem.setRightBarButton(autoScanButton, animated: false)
+        
+        if let imageScannerController = navigationController as? ImageScannerController,
+           imageScannerController.skipEditing  {
+            shutterButton.isHidden = true
+            cancelButton.isHidden = true
+            navigationItem.setRightBarButton(closeButton, animated: false)
+        } else {
+            navigationItem.setRightBarButton(autoScanButton, animated: false)
+        }
         
         if UIImagePickerController.isFlashAvailable(for: .rear) == false {
             let flashOffImage = UIImage(systemName: "bolt.slash.fill", named: "flashUnavailable", in: Bundle(for: ScannerViewController.self), compatibleWith: nil)
@@ -290,10 +311,57 @@ extension ScannerViewController: RectangleDetectionDelegateProtocol {
     func captureSessionManager(_ captureSessionManager: CaptureSessionManager, didCapturePicture picture: UIImage, withQuad quad: Quadrilateral?) {
         activityIndicator.stopAnimating()
         
-        let editVC = EditScanViewController(image: picture, quad: quad)
-        navigationController?.pushViewController(editVC, animated: false)
-        
+        guard let imageScannerController = navigationController as? ImageScannerController else { return }
+        if imageScannerController.skipEditing {
+            if let quad = quad {
+                pushReviewController(image: picture, quad: quad)
+            } else {
+                let error = ImageScannerControllerError.capture
+                imageScannerController.imageScannerDelegate?.imageScannerController(imageScannerController, didFailWithError: error)
+            }
+        } else {
+            let editVC = EditScanViewController(image: picture, quad: quad)
+            navigationController?.pushViewController(editVC, animated: false)
+        }
+  
         shutterButton.isUserInteractionEnabled = true
+    }
+    
+    func pushReviewController(image: UIImage, quad: Quadrilateral) {
+        guard let ciImage = CIImage(image: image) else {
+                if let imageScannerController = navigationController as? ImageScannerController {
+                    let error = ImageScannerControllerError.ciImageCreation
+                    imageScannerController.imageScannerDelegate?.imageScannerController(imageScannerController, didFailWithError: error)
+                }
+                return
+        }
+        let cgOrientation = CGImagePropertyOrientation(image.imageOrientation)
+        let orientedImage = ciImage.oriented(forExifOrientation: Int32(cgOrientation.rawValue))
+
+        // Cropped Image
+        var cartesianScaledQuad = quad.toCartesian(withHeight: image.size.height)
+        cartesianScaledQuad.reorganize()
+        
+        let filteredImage = orientedImage.applyingFilter("CIPerspectiveCorrection", parameters: [
+            "inputTopLeft": CIVector(cgPoint: cartesianScaledQuad.bottomLeft),
+            "inputTopRight": CIVector(cgPoint: cartesianScaledQuad.bottomRight),
+            "inputBottomLeft": CIVector(cgPoint: cartesianScaledQuad.topLeft),
+            "inputBottomRight": CIVector(cgPoint: cartesianScaledQuad.topRight)
+        ])
+        
+        let croppedImage = UIImage.from(ciImage: filteredImage)
+        // Enhanced Image
+        let enhancedImage = filteredImage.applyingAdaptiveThreshold()?.withFixedOrientation()
+        let enhancedScan = enhancedImage.flatMap { ImageScannerScan(image: $0) }
+        
+        let results = ImageScannerResults(detectedRectangle: quad,
+                                          originalScan: ImageScannerScan(image: image),
+                                          croppedScan: ImageScannerScan(image: croppedImage),
+                                          enhancedScan: enhancedScan)
+        
+        guard let imageScannerController = navigationController as? ImageScannerController else { return }
+
+        imageScannerController.imageScannerDelegate?.imageScannerController(imageScannerController, didFinishScanningWithResults: results)
     }
     
     func captureSessionManager(_ captureSessionManager: CaptureSessionManager, didDetectQuad quad: Quadrilateral?, _ imageSize: CGSize) {
