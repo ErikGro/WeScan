@@ -47,7 +47,13 @@ public final class ImageScannerController: UINavigationController {
     
     private(set) var skipEditing: Bool = false
     
-    public let acitivityIndicator = UIActivityIndicatorView()
+    public var acitivityIndicator: UIActivityIndicatorView = {
+        if #available(iOS 13.0, *) {
+            return UIActivityIndicatorView(style: .large)
+        } else {
+            return UIActivityIndicatorView(style: .whiteLarge)
+        }
+    }()
     
     // MARK: - Life Cycle
     
