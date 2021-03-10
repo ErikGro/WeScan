@@ -133,8 +133,9 @@ public final class ScannerViewController: UIViewController {
         view.addSubview(activityIndicator)
     }
     
-    private lazy var closeButton: UIBarButtonItem = {
-        let closeButton = UIBarButtonItem(barButtonSystemItem: .stop,
+    private lazy var cancelBarButton: UIBarButtonItem = {
+        let closeButton = UIBarButtonItem(title: "Cancel",
+                                          style: .plain,
                                           target: self,
                                           action: #selector(cancelImageScannerController))
         closeButton.tintColor = .white
@@ -142,15 +143,15 @@ public final class ScannerViewController: UIViewController {
     }()
     
     private func setupNavigationBar() {
-        navigationItem.setLeftBarButton(flashButton, animated: false)
+        navigationItem.setRightBarButton(flashButton, animated: false)
         
         if let imageScannerController = navigationController as? ImageScannerController,
            imageScannerController.skipEditing  {
             shutterButton.isHidden = true
             cancelButton.isHidden = true
-            navigationItem.setRightBarButton(closeButton, animated: false)
+            navigationItem.setLeftBarButton(cancelBarButton, animated: false)
         } else {
-            navigationItem.setRightBarButton(autoScanButton, animated: false)
+            navigationItem.setLeftBarButton(autoScanButton, animated: false)
         }
         
         if UIImagePickerController.isFlashAvailable(for: .rear) == false {
