@@ -370,8 +370,7 @@ extension ScannerViewController: RectangleDetectionDelegateProtocol {
         
         guard let imageScannerController = navigationController as? ImageScannerController else { return }
 
-        self.startNewScan()
-//        imageScannerController.imageScannerDelegate?.imageScannerController(imageScannerController, didFinishScanningWithResults: results)
+        imageScannerController.imageScannerDelegate?.imageScannerController(imageScannerController, didFinishScanningWithResults: results)
     }
     
     func captureSessionManager(_ captureSessionManager: CaptureSessionManager, didDetectQuad quad: Quadrilateral?, _ imageSize: CGSize) {
