@@ -49,9 +49,13 @@ public final class ImageScannerController: UINavigationController {
     
     public var acitivityIndicator: UIActivityIndicatorView = {
         if #available(iOS 13.0, *) {
-            return UIActivityIndicatorView(style: .large)
+            let indicator = UIActivityIndicatorView(style: .large)
+            indicator.translatesAutoresizingMaskIntoConstraints = false
+            return indicator
         } else {
-            return UIActivityIndicatorView(style: .whiteLarge)
+            let indicator = UIActivityIndicatorView(style: .whiteLarge)
+            indicator.translatesAutoresizingMaskIntoConstraints = false
+            return indicator
         }
     }()
     
