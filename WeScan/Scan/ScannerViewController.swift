@@ -286,6 +286,10 @@ public final class ScannerViewController: UIViewController {
         }
     }
     
+    public func startNewScan() {
+        self.captureSessionManager?.start()
+    }
+    
     @objc private func cancelImageScannerController() {
         guard let imageScannerController = navigationController as? ImageScannerController else { return }
         imageScannerController.imageScannerDelegate?.imageScannerControllerDidCancel(imageScannerController)
@@ -314,6 +318,7 @@ extension ScannerViewController: RectangleDetectionDelegateProtocol {
         
         guard let imageScannerController = navigationController as? ImageScannerController else { return }
         if imageScannerController.skipEditing {
+            
             if let quad = quad {
                 pushReviewController(image: picture, quad: quad)
             } else {

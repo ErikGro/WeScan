@@ -147,6 +147,12 @@ public final class ImageScannerController: UINavigationController {
         setViewControllers([ScannerViewController()], animated: true)
     }
     
+    public func startNewScan() {
+        guard let scanVC = topViewController as? ScannerViewController else { return }
+        
+        scanVC.startNewScan()
+    }
+    
     private func setupConstraints() {
         let blackFlashViewConstraints = [
             blackFlashView.topAnchor.constraint(equalTo: view.topAnchor),
