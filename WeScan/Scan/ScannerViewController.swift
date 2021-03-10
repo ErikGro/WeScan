@@ -286,8 +286,13 @@ public final class ScannerViewController: UIViewController {
         }
     }
     
-    public func startNewScan() {
+    public func startNewScan(autoScan: Bool = true) {
         self.captureSessionManager?.start()
+        if autoScan {
+            self.toggleAutoScan()
+        } else {
+            shutterButton.isHidden = false
+        }
     }
     
     @objc private func cancelImageScannerController() {

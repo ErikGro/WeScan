@@ -147,10 +147,10 @@ public final class ImageScannerController: UINavigationController {
         setViewControllers([ScannerViewController()], animated: true)
     }
     
-    public func startNewScan() {
+    public func startNewScan(autoScan: Bool = true) {
         guard let scanVC = topViewController as? ScannerViewController else { return }
         
-        scanVC.startNewScan()
+        scanVC.startNewScan(autoScan: autoScan)
     }
     
     private func setupConstraints() {
