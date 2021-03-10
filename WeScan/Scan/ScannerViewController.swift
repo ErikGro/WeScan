@@ -286,10 +286,16 @@ public final class ScannerViewController: UIViewController {
         }
     }
     
-    public func startNewScan(autoScan: Bool = true) {
+    public func startNewScan(showCaptureButtonAfter: TimeInterval? = nil) {
         CaptureSession.current.isEditing = false
-        CaptureSession.current.isAutoScanEnabled = autoScan
-        shutterButton.isHidden = autoScan
+        CaptureSession.current.isAutoScanEnabled = true
+        if let interval = showCaptureButtonAfter {
+            _ = Timer.scheduledTimer(withTimeInterval: interval, repeats: false, block: { _ in
+                DispatchQueue.main.async {
+                    self.shutterButton.isHidden = false
+                }
+            })
+        }
         self.captureSessionManager?.start()
     }
     
