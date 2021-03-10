@@ -287,12 +287,10 @@ public final class ScannerViewController: UIViewController {
     }
     
     public func startNewScan(autoScan: Bool = true) {
+        CaptureSession.current.isEditing = false
+        CaptureSession.current.isAutoScanEnabled = autoScan
+        shutterButton.isHidden = autoScan
         self.captureSessionManager?.start()
-        if autoScan {
-            self.toggleAutoScan()
-        } else {
-            shutterButton.isHidden = false
-        }
     }
     
     @objc private func cancelImageScannerController() {
@@ -372,7 +370,8 @@ extension ScannerViewController: RectangleDetectionDelegateProtocol {
         
         guard let imageScannerController = navigationController as? ImageScannerController else { return }
 
-        imageScannerController.imageScannerDelegate?.imageScannerController(imageScannerController, didFinishScanningWithResults: results)
+        self.startNewScan()
+//        imageScannerController.imageScannerDelegate?.imageScannerController(imageScannerController, didFinishScanningWithResults: results)
     }
     
     func captureSessionManager(_ captureSessionManager: CaptureSessionManager, didDetectQuad quad: Quadrilateral?, _ imageSize: CGSize) {
