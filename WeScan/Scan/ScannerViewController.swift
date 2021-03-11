@@ -27,6 +27,8 @@ public final class ScannerViewController: UIViewController {
     /// The original bar style that was set by the host app
     private var originalBarStyle: UIBarStyle?
     
+    private var isDetecting = true
+    
     private lazy var shutterButton: ShutterButton = {
         let button = ShutterButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -287,13 +289,11 @@ public final class ScannerViewController: UIViewController {
         }
     }
     
-    private var isDetecting = true
-    
     private func showCaptureButtonAfterDelay() {
         _ = Timer.scheduledTimer(withTimeInterval: TimeInterval(7), repeats: false, block: { _ in
             DispatchQueue.main.async {
                 // Check if currently capturing
-                if self.isDetecting {
+                if self.captureSessionManager?.isDetecting ?? true {
                     self.shutterButton.isHidden = false
                 }
             }

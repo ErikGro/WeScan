@@ -89,6 +89,11 @@ public final class ImageScannerController: UINavigationController {
         
         self.skipEditing = skipEditing
         
+        // Set defaults
+        CaptureSession.current.detectionEnabled = true
+        CaptureSession.current.isEditing = false
+        CaptureSession.current.isAutoScanEnabled = true
+        
         self.acitivityIndicator.stopAnimating()
         
         if #available(iOS 13.0, *) {
