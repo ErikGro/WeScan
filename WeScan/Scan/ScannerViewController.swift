@@ -297,14 +297,12 @@ public final class ScannerViewController: UIViewController {
     
     public func startNewScan(autoScan: Bool) {
         CaptureSession.current.isEditing = false
-
+        CaptureSession.current.isAutoScanEnabled = autoScan
+        CaptureSession.current.detectionEnabled = autoScan
+        self.shutterButton.isHidden = autoScan
+        self.captureSessionManager?.start()
         if autoScan {
-            CaptureSession.current.isAutoScanEnabled = true
-            self.captureSessionManager?.start()
             showCaptureButtonAfterDelay()
-        } else {
-            self.shutterButton.isHidden = false
-            CaptureSession.current.detectionEnabled = false
         }
     }
     
