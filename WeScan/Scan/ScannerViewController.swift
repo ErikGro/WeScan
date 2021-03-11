@@ -333,7 +333,6 @@ extension ScannerViewController: RectangleDetectionDelegateProtocol {
     }
     
     func didStartCapturingPicture(for captureSessionManager: CaptureSessionManager) {
-        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         activityIndicator.startAnimating()
         captureSessionManager.stop()
         shutterButton.isUserInteractionEnabled = false
