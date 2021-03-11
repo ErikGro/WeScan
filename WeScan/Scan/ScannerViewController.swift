@@ -96,6 +96,7 @@ public final class ScannerViewController: UIViewController {
         CaptureSession.current.isEditing = false
         quadView.removeQuadrilateral()
         captureSessionManager?.start()
+        showCaptureButtonAfterDelay()
         UIApplication.shared.isIdleTimerDisabled = true
         
         navigationController?.navigationBar.barStyle = .blackTranslucent
@@ -286,17 +287,25 @@ public final class ScannerViewController: UIViewController {
         }
     }
     
-    public func startNewScan(showCaptureButtonAfter: TimeInterval? = nil) {
+    private func showCaptureButtonAfterDelay() {
+        _ = Timer.scheduledTimer(withTimeInterval: TimeInterval(7), repeats: false, block: { _ in
+            DispatchQueue.main.async {
+                self.shutterButton.isHidden = false
+            }
+        })
+    }
+    
+    public func startNewScan(autoScan: Bool) {
         CaptureSession.current.isEditing = false
-        CaptureSession.current.isAutoScanEnabled = true
-        if let interval = showCaptureButtonAfter {
-            _ = Timer.scheduledTimer(withTimeInterval: interval, repeats: false, block: { _ in
-                DispatchQueue.main.async {
-                    self.shutterButton.isHidden = false
-                }
-            })
+
+        if autoScan {
+            CaptureSession.current.isAutoScanEnabled = true
+            self.captureSessionManager?.start()
+            showCaptureButtonAfterDelay()
+        } else {
+            self.shutterButton.isHidden = false
+            CaptureSession.current.detectionEnabled = false
         }
-        self.captureSessionManager?.start()
     }
     
     @objc private func cancelImageScannerController() {
@@ -324,7 +333,7 @@ extension ScannerViewController: RectangleDetectionDelegateProtocol {
     
     func captureSessionManager(_ captureSessionManager: CaptureSessionManager, didCapturePicture picture: UIImage, withQuad quad: Quadrilateral?) {
         activityIndicator.stopAnimating()
-        
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         guard let imageScannerController = navigationController as? ImageScannerController else { return }
         if imageScannerController.skipEditing {
             

@@ -23,15 +23,18 @@ final class CaptureSession {
     /// The status of auto scan. Auto scan tries to automatically scan a detected rectangle if it has a high enough accuracy.
     var isAutoScanEnabled: Bool
     
+    var detectionEnabled: Bool
+    
     /// The orientation of the captured image
     var editImageOrientation: CGImagePropertyOrientation
     
-    private init(isAutoScanEnabled: Bool = true, editImageOrientation: CGImagePropertyOrientation = .up) {
+    private init(isAutoScanEnabled: Bool = true, detectionEnabled: Bool = true, editImageOrientation: CGImagePropertyOrientation = .up) {
         self.device = AVCaptureDevice.default(for: .video)
         
         self.isEditing = false
         self.isAutoScanEnabled = isAutoScanEnabled
         self.editImageOrientation = editImageOrientation
+        self.detectionEnabled = detectionEnabled
     }
     
 }
