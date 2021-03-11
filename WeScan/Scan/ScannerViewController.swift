@@ -351,8 +351,8 @@ extension ScannerViewController: RectangleDetectionDelegateProtocol {
             } else {
                 guard let imageScannerController = navigationController as? ImageScannerController else { return }
                 if CaptureSession.current.isAutoScanEnabled {
-                    let editVC = EditScanViewController(image: picture, quad: quad)
-                    navigationController?.pushViewController(editVC, animated: false)
+                    pushReviewController(image: picture, quad: EditScanViewController.defaultQuad(forImage: picture))
+                    
                 } else {
                     imageScannerController.imageScannerDelegate?.imageScannerController(imageScannerController, didFinishScanningWithPlainImage: picture)
                 }
