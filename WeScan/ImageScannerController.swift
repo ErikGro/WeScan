@@ -20,6 +20,14 @@ public protocol ImageScannerControllerDelegate: NSObjectProtocol {
     /// - Discussion: Your delegate's implementation of this method should dismiss the image scanner controller.
     func imageScannerController(_ scanner: ImageScannerController, didFinishScanningWithResults results: ImageScannerResults)
     
+    /// Tells the delegate that the user scanned a plain image without cropping
+    ///
+    /// - Parameters:
+    ///   - scanner: The scanner controller object managing the scanning interface.
+    ///   - image: The image without cropping
+    /// - Discussion: Your delegate's implementation of this method should dismiss the image scanner controller.
+    func imageScannerController(_ scanner: ImageScannerController, didFinishScanningWithPlainImage image: UIImage)
+    
     /// Tells the delegate that the user cancelled the scan operation.
     ///
     /// - Parameters:

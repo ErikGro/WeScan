@@ -144,6 +144,10 @@ final class HomeViewController: UIViewController {
 }
 
 extension HomeViewController: ImageScannerControllerDelegate {
+    func imageScannerController(_ scanner: ImageScannerController, didFinishScanningWithPlainImage image: UIImage) {
+        
+    }
+    
     func imageScannerController(_ scanner: ImageScannerController, didFailWithError error: Error) {
         assertionFailure("Error occurred: \(error)")
     }

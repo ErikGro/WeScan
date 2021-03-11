@@ -182,6 +182,7 @@ final class CaptureSessionManager: NSObject, AVCaptureVideoDataOutputSampleBuffe
 
         guard CaptureSession.current.detectionEnabled else {
             self.displayedRectangleResult = nil
+            self.delegate?.captureSessionManager(self, didDetectQuad: nil, imageSize)
             
             return
         }

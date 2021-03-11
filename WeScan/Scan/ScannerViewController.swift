@@ -287,15 +287,21 @@ public final class ScannerViewController: UIViewController {
         }
     }
     
+    private var isDetecting = true
+    
     private func showCaptureButtonAfterDelay() {
         _ = Timer.scheduledTimer(withTimeInterval: TimeInterval(7), repeats: false, block: { _ in
             DispatchQueue.main.async {
-                self.shutterButton.isHidden = false
+                // Check if currently capturing
+                if self.isDetecting {
+                    self.shutterButton.isHidden = false
+                }
             }
         })
     }
     
     public func startNewScan(autoScan: Bool) {
+        self.isDetecting = true
         CaptureSession.current.isEditing = false
         CaptureSession.current.isAutoScanEnabled = autoScan
         CaptureSession.current.detectionEnabled = autoScan
@@ -327,22 +333,23 @@ extension ScannerViewController: RectangleDetectionDelegateProtocol {
     }
     
     func didStartCapturingPicture(for captureSessionManager: CaptureSessionManager) {
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         activityIndicator.startAnimating()
         captureSessionManager.stop()
         shutterButton.isUserInteractionEnabled = false
     }
     
     func captureSessionManager(_ captureSessionManager: CaptureSessionManager, didCapturePicture picture: UIImage, withQuad quad: Quadrilateral?) {
+        self.isDetecting = false
         activityIndicator.stopAnimating()
-        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         guard let imageScannerController = navigationController as? ImageScannerController else { return }
         if imageScannerController.skipEditing {
             
             if let quad = quad {
                 pushReviewController(image: picture, quad: quad)
             } else {
-                let error = ImageScannerControllerError.capture
-                imageScannerController.imageScannerDelegate?.imageScannerController(imageScannerController, didFailWithError: error)
+                guard let imageScannerController = navigationController as? ImageScannerController else { return }
+                imageScannerController.imageScannerDelegate?.imageScannerController(imageScannerController, didFinishScanningWithPlainImage: picture)
             }
         } else {
             let editVC = EditScanViewController(image: picture, quad: quad)
