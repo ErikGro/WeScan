@@ -311,7 +311,7 @@ public final class ScannerViewController: UIViewController {
         if autoScan {
             showCaptureButtonAfterDelay()
         } else {
-            captureSessionManager?.rectangleFunnel.removeMatches()
+            self.quadView.removeQuadrilateral()
         }
     }
     
@@ -341,6 +341,7 @@ extension ScannerViewController: RectangleDetectionDelegateProtocol {
     
     func captureSessionManager(_ captureSessionManager: CaptureSessionManager, didCapturePicture picture: UIImage, withQuad quad: Quadrilateral?) {
         self.isDetecting = false
+        self.shutterButton.isHidden = true
         activityIndicator.stopAnimating()
         guard let imageScannerController = navigationController as? ImageScannerController else { return }
         if imageScannerController.skipEditing {
