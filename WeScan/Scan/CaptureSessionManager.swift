@@ -180,7 +180,11 @@ final class CaptureSessionManager: NSObject, AVCaptureVideoDataOutputSampleBuffe
 
         let imageSize = CGSize(width: CVPixelBufferGetWidth(pixelBuffer), height: CVPixelBufferGetHeight(pixelBuffer))
 
-        guard CaptureSession.current.detectionEnabled else { return }
+        guard CaptureSession.current.detectionEnabled else {
+            self.displayedRectangleResult = nil
+            
+            return
+        }
         
         if #available(iOS 11.0, *) {
             VisionRectangleDetector.rectangle(forPixelBuffer: pixelBuffer) { (rectangle) in
