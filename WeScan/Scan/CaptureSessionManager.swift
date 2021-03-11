@@ -47,7 +47,7 @@ final class CaptureSessionManager: NSObject, AVCaptureVideoDataOutputSampleBuffe
     
     private let videoPreviewLayer: AVCaptureVideoPreviewLayer
     private let captureSession = AVCaptureSession()
-    private let rectangleFunnel = RectangleFeaturesFunnel()
+    let rectangleFunnel = RectangleFeaturesFunnel()
     weak var delegate: RectangleDetectionDelegateProtocol?
     private var displayedRectangleResult: RectangleDetectorResult?
     private var photoOutput = AVCapturePhotoOutput()

@@ -178,8 +178,12 @@ final class RectangleFeaturesFunnel {
         }
     }
     
+    func removeMatches() {
+        self.rectangles.removeAll()
+    }
+    
     /// Resets the matching score of all of the rectangles in the queue to 0
-    private func resetMatchingScores() {
+    func resetMatchingScores() {
         guard !rectangles.isEmpty else { return }
         for rectangle in rectangles {
             rectangle.matchingScore = 1

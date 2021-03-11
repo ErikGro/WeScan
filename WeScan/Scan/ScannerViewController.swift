@@ -300,9 +300,12 @@ public final class ScannerViewController: UIViewController {
         CaptureSession.current.isAutoScanEnabled = autoScan
         CaptureSession.current.detectionEnabled = autoScan
         self.shutterButton.isHidden = autoScan
+        captureSessionManager?.rectangleFunnel.resetMatchingScores()
         self.captureSessionManager?.start()
         if autoScan {
             showCaptureButtonAfterDelay()
+        } else {
+            captureSessionManager?.rectangleFunnel.removeMatches()
         }
     }
     
