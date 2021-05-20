@@ -173,8 +173,10 @@ final class CaptureSessionManager: NSObject, AVCaptureVideoDataOutputSampleBuffe
     // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        guard isDetecting == true,
-            let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+        guard
+            isDetecting,
+            let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
+        else {
             return
         }
 

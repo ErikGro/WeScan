@@ -20,7 +20,7 @@ extension UIImage {
     }
     
     /// Returns the same image with a portrait orientation.
-    func applyingPortraitOrientation() -> UIImage {
+    public func applyingPortraitOrientation() -> UIImage {
         switch imageOrientation {
         case .up:
             return rotated(by: Measurement(value: Double.pi, unit: .radians), options: []) ?? self

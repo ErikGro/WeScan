@@ -290,6 +290,11 @@ public final class ScannerViewController: UIViewController {
     }
     
     private func showCaptureButtonAfterDelay() {
+        guard CaptureSession.current.isAutoScanEnabled else {
+            self.shutterButton.isHidden = false
+            return
+        }
+        
         _ = Timer.scheduledTimer(withTimeInterval: TimeInterval(7), repeats: false, block: { _ in
             DispatchQueue.main.async {
                 // Check if currently capturing
@@ -344,7 +349,6 @@ extension ScannerViewController: RectangleDetectionDelegateProtocol {
         activityIndicator.stopAnimating()
         guard let imageScannerController = navigationController as? ImageScannerController else { return }
         if imageScannerController.skipEditing {
-            
             if let quad = quad {
                 pushReviewController(image: picture, quad: quad)
             } else {
