@@ -82,7 +82,7 @@ public final class ImageScannerController: UINavigationController {
         return .portrait
     }
     
-    public required init(image: UIImage? = nil, delegate: ImageScannerControllerDelegate? = nil, skipEditing: Bool = false) {
+    public required init(image: UIImage? = nil, delegate: ImageScannerControllerDelegate? = nil, skipEditing: Bool = false, enableCropping: Bool = true) {
         super.init(rootViewController: ScannerViewController())
         
         self.imageScannerDelegate = delegate
@@ -90,9 +90,9 @@ public final class ImageScannerController: UINavigationController {
         self.skipEditing = skipEditing
         
         // Set defaults
-        CaptureSession.current.detectionEnabled = true
+        CaptureSession.current.detectionEnabled = enableCropping
         CaptureSession.current.isEditing = false
-        CaptureSession.current.isAutoScanEnabled = true
+        CaptureSession.current.isAutoScanEnabled = enableCropping
         
         self.acitivityIndicator.stopAnimating()
         
