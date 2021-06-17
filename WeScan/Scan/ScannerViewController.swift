@@ -12,7 +12,7 @@ import AVFoundation
 /// The `ScannerViewController` offers an interface to give feedback to the user regarding quadrilaterals that are detected. It also gives the user the opportunity to capture an image with a detected rectangle.
 public final class ScannerViewController: UIViewController {
     
-    private var captureSessionManager: CaptureSessionManager?
+    var captureSessionManager: CaptureSessionManager?
     private let videoPreviewLayer = AVCaptureVideoPreviewLayer()
     
     /// The view that shows the focus rectangle (when the user taps to focus, similar to the Camera app)
@@ -85,6 +85,10 @@ public final class ScannerViewController: UIViewController {
         }
         
         captureSessionManager = CaptureSessionManager(videoPreviewLayer: videoPreviewLayer, delegate: self)
+        
+        if let imageScannerController = navigationController as? ImageScannerController {
+            captureSessionManager?.imageBufferDelegate = imageScannerController.imageBufferDelegate
+        }
         
         originalBarStyle = navigationController?.navigationBar.barStyle
         
@@ -291,7 +295,7 @@ public final class ScannerViewController: UIViewController {
     
     private func showCaptureButtonAfterDelay() {
         guard CaptureSession.current.isAutoScanEnabled else {
-            self.shutterButton.isHidden = false
+            self.shutterButton.isHidden = true
             return
         }
         

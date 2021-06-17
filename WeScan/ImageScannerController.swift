@@ -9,6 +9,10 @@
 import UIKit
 import AVFoundation
 
+public protocol ImageBufferDelegate: NSObjectProtocol {
+    func captureOutput(with sampleBuffer: CMSampleBuffer)
+}
+
 /// A set of methods that your delegate object must implement to interact with the image scanner interface.
 public protocol ImageScannerControllerDelegate: NSObjectProtocol {
     
@@ -53,6 +57,8 @@ public final class ImageScannerController: UINavigationController {
     /// The object that acts as the delegate of the `ImageScannerController`.
     public weak var imageScannerDelegate: ImageScannerControllerDelegate?
     
+    public weak var imageBufferDelegate: ImageBufferDelegate?
+    
     private(set) var skipEditing: Bool = false
     
     public var acitivityIndicator: UIActivityIndicatorView = {
@@ -82,7 +88,8 @@ public final class ImageScannerController: UINavigationController {
         return .portrait
     }
     
-    public required init(image: UIImage? = nil, delegate: ImageScannerControllerDelegate? = nil, skipEditing: Bool = false) {
+    public required init(image: UIImage? = nil, delegate: ImageScannerControllerDelegate? = nil, bufferDelegate: ImageBufferDelegate? = nil, skipEditing: Bool = false, enableCropping: Bool = true) {
+        self.imageBufferDelegate = bufferDelegate
         super.init(rootViewController: ScannerViewController())
         
         self.imageScannerDelegate = delegate
@@ -90,9 +97,9 @@ public final class ImageScannerController: UINavigationController {
         self.skipEditing = skipEditing
         
         // Set defaults
-        CaptureSession.current.detectionEnabled = true
+        CaptureSession.current.detectionEnabled = enableCropping
         CaptureSession.current.isEditing = false
-        CaptureSession.current.isAutoScanEnabled = true
+        CaptureSession.current.isAutoScanEnabled = enableCropping
         
         self.acitivityIndicator.stopAnimating()
         
@@ -157,7 +164,9 @@ public final class ImageScannerController: UINavigationController {
     }
     
     public func resetScanner() {
-        setViewControllers([ScannerViewController()], animated: true)
+        let scannerVC = ScannerViewController()
+        scannerVC.captureSessionManager?.imageBufferDelegate = self.imageBufferDelegate
+        setViewControllers([scannerVC], animated: true)
     }
     
     public func startNewScan(autoScan: Bool = true) {

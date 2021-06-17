@@ -51,6 +51,7 @@ final class CaptureSessionManager: NSObject, AVCaptureVideoDataOutputSampleBuffe
     weak var delegate: RectangleDetectionDelegateProtocol?
     private var displayedRectangleResult: RectangleDetectorResult?
     private var photoOutput = AVCapturePhotoOutput()
+    public weak var imageBufferDelegate: ImageBufferDelegate?
     
     /// Whether the CaptureSessionManager should be detecting quadrilaterals.
     var isDetecting = true
@@ -173,6 +174,8 @@ final class CaptureSessionManager: NSObject, AVCaptureVideoDataOutputSampleBuffe
     // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        imageBufferDelegate?.captureOutput(with: sampleBuffer)
+        
         guard
             isDetecting,
             let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
