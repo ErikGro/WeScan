@@ -90,6 +90,7 @@ public final class ImageScannerController: UINavigationController {
     
     public required init(image: UIImage? = nil, delegate: ImageScannerControllerDelegate? = nil, bufferDelegate: ImageBufferDelegate? = nil, skipEditing: Bool = false, enableCropping: Bool = true) {
         self.imageBufferDelegate = bufferDelegate
+
         super.init(rootViewController: ScannerViewController())
         
         self.imageScannerDelegate = delegate
